@@ -68,49 +68,63 @@ class KreativanForms extends WireData implements Module {
 
         // submit button name
         $submit = !empty($postParams['submit']) ? $postParams['submit'] : 'submit';
-        // admin email, send mail to
-        $adminEmail = !empty($postParams['admin_email']) ? $postParams['admin_email'] : "";
-        // user email field for replayTo
-        $email_field = !empty($postParams['user_email']) ? $postParams['user_email'] : "";
-        $email = $_POST["$email_field"];
-        // subject field
-        $subject_field = !empty($postParams['subject']) ? $postParams['subject'] : "";
-        $subject = $_POST["$subject_field"];
-        // success message after processing the form
-        $success_message = !empty($postParams['success_message']) ? $postParams['success_message'] : "Your message has been sent";
 
         if($this->input->post->{$submit}) {
 
-            // emial body
-            $email_body = "";
+            if($this->formValidate() == true) {
 
-            // remove token from post array toexlude it from email_body
-            array_pop($_POST);
-            // fields not to include in email_body
-            $exclude_fields = ["$submit", "captcha_answer", "numb_captcha"];
+                // admin email, send mail to
+                $adminEmail = !empty($postParams['admin_email']) ? $postParams['admin_email'] : "";
+                // user email field for replayTo
+                $email_field = !empty($postParams['user_email']) ? $postParams['user_email'] : "";
+                $email = $_POST["$email_field"];
+                // subject field
+                $subject_field = !empty($postParams['subject']) ? $postParams['subject'] : "";
+                $subject = $_POST["$subject_field"];
+                // success message after processing the form
+                $success_message = !empty($postParams['success_message']) ? $postParams['success_message'] : "Your message has been sent";
 
-            // loop true $_POST and update $email_body
-            foreach($_POST as $key => $value) {
-                if(!empty($value) && !in_array($key, $exclude_fields)) {
-                    $value = strip_tags($value);
-                    $value = nl2br($value);
-                    $label = str_replace("_", " ", $key);
-                    $label = ucfirst($label);
-                    $email_body .= "<p><b>$label:</b><br /> $value</p>";
+                // emial body
+                $email_body = "";
+
+                // remove token from post array toexlude it from email_body
+                array_pop($_POST);
+                // fields not to include in email_body
+                $exclude_fields = ["$submit", "captcha_answer", "numb_captcha"];
+
+                // loop true $_POST and update $email_body
+                foreach($_POST as $key => $value) {
+                    if(!empty($value) && !in_array($key, $exclude_fields)) {
+                        $value = strip_tags($value);
+                        $value = nl2br($value);
+                        $label = str_replace("_", " ", $key);
+                        $label = ucfirst($label);
+                        $email_body .= "<p><b>$label:</b><br /> $value</p>";
+                    }
                 }
+
+                $email_to       = $adminEmail;
+                $email_subject  = $subject;
+                $email_from     = $email;
+                mail("$email_to", "$email_subject", "$email_body", "From: $email_from\nContent-Type: text/html");
+
+                $_SESSION['status'] = "primary";
+                $_SESSION['alert'] = "$success_message";
+
+                // redirect
+                header("Location: {$this->page->url}");
+                exit();
+
+            } else {
+
+                $_SESSION['status'] = "danger";
+                $_SESSION['alert'] = __("There was an error! Please fill in all required fields.");
+
+                // redirect
+                header("Location: {$this->page->url}");
+                exit();
+
             }
-
-            $email_to       = $adminEmail;
-            $email_subject  = $subject;
-            $email_from     = $email;
-            mail("$email_to", "$email_subject", "$email_body", "From: $email_from\nContent-Type: text/html");
-
-            $_SESSION['status'] = "primary";
-            $_SESSION['alert'] = "$success_message";
-
-            // redirect
-            header("Location: {$this->page->url}");
-            exit();
 
         }
 

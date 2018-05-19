@@ -48,7 +48,7 @@ class KreativanForms extends WireData implements Module {
     /**
      *  Form Process
      *  @param postParams main param array
-     *  @param submit string form submit button name
+     *  @param submit_button string form submit button name
      *  @param admin_email admin email
      *  @param user_email field that will be sued as user email for replyTo
      *  @param subject  field that will be used for subject
@@ -67,9 +67,9 @@ class KreativanForms extends WireData implements Module {
     public function processForm($postParams = "") {
 
         // submit button name
-        $submit = !empty($postParams['submit']) ? $postParams['submit'] : 'submit';
+        $submit_button = !empty($postParams['submit_button']) ? $postParams['submit_button'] : 'submit';
 
-        if($this->input->post->{$submit}) {
+        if($this->input->post->{$submit_button}) {
 
             if($this->formValidate() == true) {
 
@@ -90,7 +90,7 @@ class KreativanForms extends WireData implements Module {
                 // remove token from post array toexlude it from email_body
                 array_pop($_POST);
                 // fields not to include in email_body
-                $exclude_fields = ["$submit", "captcha_answer", "numb_captcha"];
+                $exclude_fields = ["$submit_button", "captcha_answer", "numb_captcha"];
 
                 // loop true $_POST and update $email_body
                 foreach($_POST as $key => $value) {
@@ -102,12 +102,17 @@ class KreativanForms extends WireData implements Module {
                         $email_body .= "<p><b>$label:</b><br /> $value</p>";
                     }
                 }
-
+                
+               /**
+                 *  Let's send an email
+                 *
+                 */
                 $email_to       = $adminEmail;
                 $email_subject  = $subject;
                 $email_from     = $email;
                 mail("$email_to", "$email_subject", "$email_body", "From: $email_from\nContent-Type: text/html");
-
+                
+                // set success session alert
                 $_SESSION['status'] = "primary";
                 $_SESSION['alert'] = "$success_message";
 
@@ -116,7 +121,8 @@ class KreativanForms extends WireData implements Module {
                 exit();
 
             } else {
-
+                
+                // set error session alert
                 $_SESSION['status'] = "danger";
                 $_SESSION['alert'] = __("There was an error! Please fill in all required fields.");
 
@@ -182,7 +188,11 @@ class KreativanForms extends WireData implements Module {
     public function renderForm($form) {
 
         $form_markup = "";
-
+         
+        /**
+         *  Display success / error alert
+         *
+         */
         if(isset($_SESSION['alert'])) {
             $form_markup .= "
                 <div class='uk-alert-{$_SESSION['status']}' uk-alert>

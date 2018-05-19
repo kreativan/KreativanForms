@@ -60,7 +60,7 @@ echo $modules->get("KreativanForms")->renderForm($form);
  *
  */
 $postParams = [
-    "submit" => "submit",
+    "submit_button" => "submit",
     "admin_email" => $system->site_info->email,
     "user_email" => "email",
     "subject" => "subject",

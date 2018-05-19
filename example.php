@@ -53,7 +53,7 @@ $form = [
     "button_style" => "primary",
     "button_class" => "",
 ];
-echo $modules->get("KappsForms")->renderForm($form);
+echo $modules->get("KreativanForms")->renderForm($form);
 
 /**
  *  Process Form
@@ -66,4 +66,4 @@ $postParams = [
     "subject" => "subject",
     "success_message" => "Message Sent! Thank you!!!"
 ];
-echo $modules->get("KappsForms")->processForm($postParams);
+echo $modules->get("KreativanForms")->processForm($postParams);

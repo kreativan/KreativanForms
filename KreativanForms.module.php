@@ -95,8 +95,15 @@ class KreativanForms extends WireData implements Module {
                 // loop true $_POST and update $email_body
                 foreach($_POST as $key => $value) {
                     if(!empty($value) && !in_array($key, $exclude_fields)) {
-                        $value = strip_tags($value);
-                        $value = nl2br($value);
+                        // check if posted value is array (eg: cheboxes values)
+                        // if it is, implode it to string
+                        if(is_array($value)) {
+                            $value = implode(",", $value);
+                            $value = nl2br($value);
+                        } else {
+                            $value = strip_tags($value);
+                            $value = nl2br($value);
+                        }
                         $label = str_replace("_", " ", $key);
                         $label = ucfirst($label);
                         $email_body .= "<p><b>$label:</b><br /> $value</p>";
@@ -163,13 +170,14 @@ class KreativanForms extends WireData implements Module {
      *      echo $modules->get("KappsForms")->renderForm($form);
      *
      *  Fields Array Params
-     *  @param type string (tetx, email, textarea...)
+     *  @param type string (text, email, textarea...)
      *  @param name string (no space allowed)
      *  @param label string
      *  @param placeholder  string
      *  @param required bool (true/false)
      *  @param width string (uikit grid widtheg: 1-2)
      *  @param rows int
+     *  @param oprions array
      *
      *  Fields Array Example:
      *
@@ -231,6 +239,7 @@ class KreativanForms extends WireData implements Module {
                 $required       = (!empty($field["required"]) && $field["required"] == true) ? true : false;
                 $width          = !empty($field["width"]) ? $field["width"] : "1-1";
                 $rows           = !empty($field["rows"]) ? $field["rows"] : "5";
+                $options        = !empty($field['options']) ? $field['options'] : "";
 
                 // required sttribute
                 $required_attr = ($required == true) ? "required" : "";
@@ -253,6 +262,49 @@ class KreativanForms extends WireData implements Module {
                             <label class='uk-form-label'>$label</label>
                             <textarea class='uk-textarea' rows='$rows' name='$name'  placeholder='$placeholder' $required_attr></textarea>
                         ";
+                    } elseif ($field["type"] == "number") {
+                        $form_markup .= "
+                            <label class='uk-form-label'>$label</label>
+                            <input class='uk-input' type='number' name='$name' placeholder='$placeholder' $required_attr />
+                        ";
+                    } elseif ($field["type"] == "url") {
+                        $form_markup .= "
+                            <label class='uk-form-label'>$label</label>
+                            <input class='uk-input' type='url' name='$name' placeholder='$placeholder' $required_attr />
+                        ";
+                    } elseif ($field["type"] == "select") {
+                        $form_markup .= "<label class='uk-form-label'>$label</label>";
+                        $form_markup .= "<select class='uk-select' name='$name'>";
+                            foreach($options as $option) {
+                                $form_markup .= "<option value='$option'>$option</option>";
+                            }
+                        $form_markup .= "</select>";
+                    } elseif ($field["type"] == "checkbox") {
+                        $form_markup .= "<label class='uk-form-label'>$label</label>";
+                            $form_markup .= "<div>";
+                                foreach($options as $option) {
+                                    $form_markup .= "
+                                        <label class='uk-form-label uk-margin-small-right'>
+                                            <input class='uk-checkbox' type='checkbox' name='{$name}[]' value='$option' />
+                                            <span>$option</span>
+                                        </label>
+                                    ";
+                                }
+                            $form_markup .= "</div>";
+                    } elseif ($field["type"] == "radio") {
+                        $form_markup .= "<label class='uk-form-label'>$label</label>";
+                            $form_markup .= "<div>";
+                                $i = 0;
+                                foreach($options as $option) {
+                                    $checked = $i++ == 0 ? "checked" : "";
+                                    $form_markup .= "
+                                        <label class='uk-form-label uk-margin-small-right'>
+                                            <input class='uk-radio' type='radio' name='{$name}' value='$option' $checked />
+                                            <span>$option</span>
+                                        </label>
+                                    ";
+                                }
+                            $form_markup .= "</div>";
                     }
 
                 $form_markup .= "</div></div>";
@@ -276,6 +328,7 @@ class KreativanForms extends WireData implements Module {
                     <input type='submit' name='$button_name' class='{$button_class}uk-button uk-button-$button_style' value='$button_text' />
                 </div>
             ";
+
         $form_markup .= $this->session->CSRF->renderInput() . "</form>";
 
         return $form_markup;

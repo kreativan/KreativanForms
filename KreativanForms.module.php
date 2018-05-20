@@ -83,7 +83,7 @@ class KreativanForms extends WireData implements Module {
                 $subject_field = !empty($postParams['subject']) ? $postParams['subject'] : "";
                 $subject = $_POST["$subject_field"];
                 // success message after processing the form
-                $success_message = !empty($postParams['success_message']) ? $postParams['success_message'] : "Your message has been sent";
+                $success_message = !empty($postParams['success_message']) ? $postParams['success_message'] : __("Your message has been sent");
 
                 // emial body
                 $email_body = "";

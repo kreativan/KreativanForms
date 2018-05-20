@@ -32,7 +32,7 @@ $form = [
     "button_style" => "primary", // uikit color class
     "button_class" => "", // add some custom class
 ];
-echo $modules->get("KappsForms")->renderForm($form);
+echo $modules->get("KreativanForms")->renderForm($form);
 ```
 #### Processing Form
 processForm() function accepts few params. Only required fields are ***submit_button*** (so we know what form to submit) and ***admin_email*** (where to send form to).    
@@ -46,14 +46,14 @@ $postParams = [
     "subject" => "subject",
     "success_message" => "Message Sent! Thank you!!!"
 ];
-echo $modules->get("KappsForms")->processForm($postParams);
+echo $modules->get("KreativanForms")->processForm($postParams);
 ```
 ## Example
 Let's create simple contact form
 ```
 <?php
 
-$kreativanForms = $modules->get("KappsForms");
+$kreativanForms = $modules->get("KreativanForms");
 
 // set fields
 $fields_arr = [

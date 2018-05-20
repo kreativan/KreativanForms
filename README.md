@@ -3,7 +3,7 @@ Processwire Forms Module, based on uikit 3.
 
 Module supports only CSRF and basic validation (for now), comes with basic fields (date and time picker included) and custom math captcha (eg: 2 +5 = ?)...
 
-To create forms, you need to define your form fields and renderForm() and processForm() functions, and thats it.
+To create forms, you need to define your form fields and execute renderForm() and processForm() functions, and thats it.
 
 #### Define Fields in array()
 Only required value is array key, type and options (if its a select, radio or checkbox field type). If name is not defined, array key will be used instead, and for the rest of the values defaults will be used.

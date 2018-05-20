@@ -189,6 +189,7 @@ class KreativanForms extends WireData implements Module {
      *             "placeholder" => "type in your email",
      *             "required" => true,
      *             "width" => "1-2",
+     *             "options" => ["option 1", "option 2", "option 3"],
      *         ],
      *     ];
      *

@@ -7,7 +7,6 @@
 $form_fields = [
     "name" => [
         "type" => "text",
-        "name" => "name",
         "label" => "Your Name",
         "placeholder" => "your name...",
         "required" => true,
@@ -15,7 +14,6 @@ $form_fields = [
     ],
     "email" => [
         "type" => "email",
-        "name" => "email",
         "label" => "Your Email",
         "placeholder" => "your email address...",
         "required" => true,
@@ -23,7 +21,6 @@ $form_fields = [
     ],
     "subject" => [
         "type" => "text",
-        "name" => "subject",
         "label" => "Subject",
         "placeholder" => "What is this about m?",
         "required" => false,
@@ -31,7 +28,6 @@ $form_fields = [
     ],
     "url" => [
         "type" => "text",
-        "name" => "url",
         "label" => "URL",
         "placeholder" => "URL",
         "required" => false,
@@ -39,7 +35,6 @@ $form_fields = [
     ],
     "select" => [
         "type" => "select",
-        "name" => "select",
         "label" => "Select Options",
         "required" => false,
         "options" => ["option 1", "option 2", "option 3"],
@@ -47,7 +42,6 @@ $form_fields = [
     ],
     "number" => [
         "type" => "number",
-        "name" => "number",
         "label" => "Number",
         "placeholder" => "5+",
         "required" => false,
@@ -55,21 +49,32 @@ $form_fields = [
     ],
     "checkbox" => [
         "type" => "checkbox",
-        "name" => "checkbox",
         "label" => "Checkbox Options",
         "options" => ["option 1", "option 2", "option 3"],
         "width" => "1-2",
     ],
     "radio" => [
         "type" => "radio",
-        "name" => "radio",
         "label" => "Radio Options",
         "options" => ["option 1", "option 2", "option 3"],
         "width" => "1-2",
     ],
+    "date" => [
+        "type" => "date",
+        "label" => "Pick a Date",
+        "placeholder" => "Pick a Date",
+        "required" => true,
+        "width" => "1-2",
+    ],
+    "time" => [
+        "type" => "time",
+        "label" => "Pick a Time",
+        "placeholder" => "Pick a Time",
+        "required" => true,
+        "width" => "1-2",
+    ],
     "message" => [
         "type" => "textarea",
-        "name" => "message",
         "label" => "Message",
         "placeholder" => "your message here...",
         "required" => false,

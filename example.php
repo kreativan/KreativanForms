@@ -81,6 +81,14 @@ $form_fields = [
         "width" => "1-1",
         "rows" => "5",
     ],
+    "my_file" => [
+        "type" => "file",
+        "label" => "File",
+        "placeholder" => "Select File",
+        "required" => false,
+        "width" => "1-1",
+        "rows" => "5",
+    ],
 ];
 
 /**

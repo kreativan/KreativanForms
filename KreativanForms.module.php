@@ -52,9 +52,9 @@ class KreativanForms extends WireData implements Module {
 
     /**
      *  Form Process
-     * 
+     *
      *  @param postParams main param array
-     * 
+     *
      *  @param submit_button string form submit button name
      *  @param admin_email admin email
      *  @param user_email field that will be sued as user email for replyTo
@@ -65,6 +65,9 @@ class KreativanForms extends WireData implements Module {
      *
      */
     public function processForm($postParams = "") {
+
+        // main var that we will return at the end
+        $form_process = "";
 
         // submit button name
         $submit_button = !empty($postParams['submit_button']) ? $postParams['submit_button'] : 'submit';
@@ -111,14 +114,44 @@ class KreativanForms extends WireData implements Module {
                     }
                 }
 
-                /**
-                 *  Let's send an email
-                 *
-                 */
-                $email_to       = $adminEmail;
-                $email_subject  = $subject;
-                $email_from     = $email;
-                mail("$email_to", "$email_subject", "$email_body", "From: $email_from\nContent-Type: text/html");
+                // File Upload (using wireMail for attachments)
+                // ========================================================================
+                if(!empty($_FILES)) {
+                    // files array
+                    $files_arr = [];
+                    // upload files
+                    $form_process .= $this->fileUpload();
+                    // create array of files
+                    foreach($_FILES as $file) {
+                        $files_arr[] .= $this->config->paths->files."_tmp/$file[name]";
+                    }
+
+                    // send email
+                    $m = wireMail();
+                    $m->to($adminEmail); // specify CSV string or array for multiple addresses
+                    $m->from($email);
+                    $m->subject($subject);
+                    $m->bodyHTML($email_body);
+                    if(!empty($files_arr)) {
+                        $f = 0;
+                        foreach($_FILES as $file) {
+                            $m->attachment($files_arr[$f++]);
+                        }
+                    }
+                    $m->send();
+
+                } else {
+                    // if no files send basic mail
+                    // ========================================================================
+                    $email_to       = $adminEmail;
+                    $email_subject  = $subject;
+                    $email_from     = $email;
+                    mail("$email_to", "$email_subject", "$email_body", "From: $email_from\nContent-Type: text/html");
+                }
+
+                // Delete Temp Files
+                // ========================================================================
+                $form_process .= $this->deleteTempFiles();
 
                 // set success session alert
                 $_SESSION['status'] = "primary";
@@ -141,6 +174,8 @@ class KreativanForms extends WireData implements Module {
             }
 
         }
+
+        return $form_process;
 
     }
 
@@ -209,7 +244,7 @@ class KreativanForms extends WireData implements Module {
         $answer = $numb_1 + $numb_2;
 
         // form markup
-        $form_markup .= "<form id='$form_id' action='./' method='POST' class='{$form_class}uk-grid-small' uk-grid>";
+        $form_markup .= "<form id='$form_id' action='./' method='POST' enctype='multipart/form-data' class='{$form_class}uk-grid-small' uk-grid>";
 
             foreach($form_fields as $key => $field) {
                 // field vars
@@ -296,30 +331,36 @@ class KreativanForms extends WireData implements Module {
                         $is_time = true;
                         $form_markup .= "<label class='uk-form-label'>$label</label>";
                         $form_markup .= "<input class='timePicker uk-input' type='text' name='$name' placeholder='$placeholder' $required_attr />";
+                    } elseif ($field["type"] == "file") {
+                        $form_markup .= "<label class='uk-form-label uk-display-block'>$label</label>";
+                        $form_markup .= "
+                            <div class='uk-width-1-1' uk-form-custom='target: true'>
+                                <input type='file' name='$name'>
+                                <input class='uk-input' type='text' placeholder='$placeholder' disabled>
+                            </div>
+                        ";
                     }
 
                 $form_markup .= "</div></div>";
             }
 
-            // captcha
-            $form_markup .= "
-                <div class='uk-margin uk-grid-collapse' uk-grid>
-                    <div class='uk-width-auto uk-flex uk-flex-middle'>
-                        <label class='uk-h3'>$numb_q</label>
+            $form_markup .= "<div class='uk-flex uk-width-1-1 uk-margin-top'>";
+                // captcha
+                $form_markup .= "
+                    <div class='uk-grid-collapse' uk-grid>
+                        <div class='uk-width-auto uk-flex uk-flex-middle'>
+                            <label class='uk-h3'>$numb_q</label>
+                        </div>
+                        <div class='uk-width-auto'>
+                            <input class='numb-captcha-answer uk-hidden' type='text' name='captcha_answer' value='$answer' required />
+                            <input class='numb-captcha-q uk-input uk-form-width-xsmall uk-margin-small-left uk-text-center' type='text' name='numb_captcha' placeholder='?' required />
+                        </div>
                     </div>
-                    <div class='uk-width-auto'>
-                        <input class='numb-captcha-answer uk-hidden' type='text' name='captcha_answer' value='$answer' required />
-                        <input class='numb-captcha-q uk-input uk-form-width-xsmall uk-margin-small-left uk-text-center' type='text' name='numb_captcha' placeholder='?' required />
+                    <div class='uk-margin-left'>
+                        <input type='submit' name='$button_name' class='{$button_class}uk-button uk-button-$button_style' value='$button_text' />
                     </div>
-                </div>
-            ";
-
-            // submit button
-            $form_markup .= "
-                <div class='uk-margin-top'>
-                    <input type='submit' name='$button_name' class='{$button_class}uk-button uk-button-$button_style' value='$button_text' />
-                </div>
-            ";
+                ";
+            $form_markup .= "</div>";
 
         $form_markup .= $this->session->CSRF->renderInput() . "</form>";
 
@@ -334,9 +375,9 @@ class KreativanForms extends WireData implements Module {
 
     /**
      *  Load and init flatpickr
-     * 
+     *
      *  @param form_id string form css id
-     * 
+     *
      *
      */
     public function flatpickr($form_id) {
@@ -394,6 +435,38 @@ class KreativanForms extends WireData implements Module {
 
         return $script;
 
+    }
+
+    public function fileUpload() {
+
+        // destination dir
+        $storeFolder = $this->config->paths->files."_tmp/";
+
+        // if dir doesnt exist, create it
+        if(!file_exists($storeFolder) && !is_dir($storeFolder)) {
+            mkdir($storeFolder);
+        }
+
+        foreach($_FILES as $file) {
+            $tempFile = $file["tmp_name"];
+            $targetFile =  $storeFolder. $file['name'];
+            move_uploaded_file($tempFile,$targetFile);
+        }
+
+    }
+
+    public function deleteTempFiles() {
+        /**
+         * Delete temp files
+         */
+        if(!empty($_FILES)) {
+            foreach($_FILES as $file) {
+                $tmp_file = $this->config->paths->files."_tmp/$file[name]";
+                if(file_exists($tmp_file)) {
+                    unlink($tmp_file);
+                }
+            }
+        }
     }
 
 

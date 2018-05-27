@@ -1,7 +1,7 @@
 # KreativanForms
 Processwire Forms Module, based on uikit 3.     
 
-Module supports only CSRF and basic validation (for now), comes with basic fields (date and time picker included) and custom math captcha (eg: 2 +5 = ?)...
+Module supports only CSRF and basic validation (for now), comes with basic fields (file upload, date and time picker included) and custom math captcha (eg: 2 +5 = ?)...
 
 To create forms, you need to define your form fields and execute renderForm() and processForm() functions, and thats it.
 

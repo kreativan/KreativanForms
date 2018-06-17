@@ -72,7 +72,7 @@ class KreativanForms extends WireData implements Module {
         // submit button name
         $submit_button = !empty($postParams['submit_button']) ? $postParams['submit_button'] : 'submit';
 
-        // is form is submited process...
+        // if form is submited process...
         if($this->input->post->{$submit_button}) {
 
             if($this->formValidate() == true) {
@@ -91,7 +91,7 @@ class KreativanForms extends WireData implements Module {
                 // emial body
                 $email_body = "";
 
-                // remove token from post array toexlude it from email_body
+                // remove token from post array to exlude it from email_body
                 array_pop($_POST);
                 // fields not to include in email_body
                 $exclude_fields = ["$submit_button", "captcha_answer", "numb_captcha"];
@@ -128,7 +128,7 @@ class KreativanForms extends WireData implements Module {
 
                     // send email
                     $m = wireMail();
-                    $m->to($adminEmail); // specify CSV string or array for multiple addresses
+                    $m->to($adminEmail);
                     $m->from($email);
                     $m->subject($subject);
                     $m->bodyHTML($email_body);

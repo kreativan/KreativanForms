@@ -231,7 +231,7 @@ class KreativanForms extends WireData implements Module {
         // main form params
         $form_fields    = $form["fields"];
         $form_class     = !empty($form['class']) ? "{$form['class']} " : "";
-        $form_id        = !empty($form['id']) ? $form['id'] : "Kreativan-form-".rand(10, 1000);
+        $form_id        = !empty($form['id']) ? $form['id'] : "";
         $button_name    = !empty($form['button_name']) ? $form['button_name'] : "submit";
         $button_style   = !empty($form['button_style']) ? $form['button_style'] : "primary";
         $button_class   = !empty($form['button_class']) ? "{$form['button_class']} " : "";
@@ -244,7 +244,7 @@ class KreativanForms extends WireData implements Module {
         $answer = $numb_1 + $numb_2;
 
         // form markup
-        $form_markup .= "<form id='$form_id' action='./' method='POST' enctype='multipart/form-data' class='{$form_class}uk-grid-small' uk-grid>";
+        $form_markup .= "<form id='$form_id' action='./' method='POST' enctype='multipart/form-data' class='{$form_class}'><div class='uk-grid-small' uk-grid>";
 
             foreach($form_fields as $key => $field) {
                 // field vars
@@ -362,7 +362,7 @@ class KreativanForms extends WireData implements Module {
                 ";
             $form_markup .= "</div>";
 
-        $form_markup .= $this->session->CSRF->renderInput() . "</form>";
+        $form_markup .= $this->session->CSRF->renderInput() . "</div></form>";
 
         if($is_date == true || $is_time == true) {
             return $this->flatpickr($form_id) . $form_markup;

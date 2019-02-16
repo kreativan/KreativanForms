@@ -154,8 +154,8 @@ class KreativanForms extends WireData implements Module {
                 $form_process .= $this->deleteTempFiles();
 
                 // set success session alert
-                $this->session->set("status", "primary");
-                $this->session->set("alert", "$success_message");
+                $this->session->set("kforms_status", "primary");
+                $this->session->set("kforms_alert", "$success_message");
 
                 // redirect
                 header("Location: {$this->page->url}");
@@ -164,8 +164,8 @@ class KreativanForms extends WireData implements Module {
             } else {
 
                 // set error session alert
-				$this->session->set("status", "danger");
-                $this->session->set("alert", "There was an error! Please fill in all required fields.");
+				$this->session->set("kforms_status", "danger");
+                $this->session->set("kforms_alert", "There was an error! Please fill in all required fields.");
 
                 // redirect
                 header("Location: {$this->page->url}");
@@ -217,15 +217,15 @@ class KreativanForms extends WireData implements Module {
          *  Display success / error alert
          *
          */
-        if($this->session->get("alert")) {
+        if($this->session->get("kforms_alert")) {
             $form_markup .= "
-                <div class='uk-alert-{$this->session->get("status")}' uk-alert>
+                <div class='uk-alert-{$this->session->get("kforms_status")}' uk-alert>
                     <a class='uk-alert-close' uk-close></a>
-                    <p>{$this->session->get("alert")}</p>
+                    <p>{$this->session->get("kforms_alert")}</p>
                 </div>
             ";
-            $this->session->remove('status');
-			$this->session->remove('alert');
+            $this->session->remove('kforms_status');
+			$this->session->remove('kforms_alert');
         }
 
         // main form params

@@ -25,6 +25,7 @@ We need to pass few parametars to the renderForm() function. Only required value
 ```
 $form = [
     "fields" => $fields_arr, // fields array
+	"url" => "./",
     "class" => "my-form-class",
     "id" => "my-form",
     "button_name" => "submit", // submit button name
@@ -44,7 +45,8 @@ $postParams = [
     "admin_email" => "example@gmail.com",
     "user_email" => "email",
     "subject" => "subject",
-    "success_message" => "Message Sent! Thank you!!!"
+    "success_message" => "Message Sent! Thank you!!!",
+	"redirect_url" => "./",
 ];
 echo $modules->get("KreativanForms")->processForm($postParams);
 ```

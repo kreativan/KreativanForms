@@ -60,6 +60,7 @@ class KreativanForms extends WireData implements Module {
      *  @param user_email field that will be sued as user email for replyTo
      *  @param subject  field that will be used for subject
      *  @param success_message string
+	 *	@param redirect_url  redirect url after form submit
      *
      *  @example echo $modules->get("KreativanForms")->processForm($postParams);
      *
@@ -68,6 +69,9 @@ class KreativanForms extends WireData implements Module {
 
         // main var that we will return at the end
         $form_process = "";
+		
+		// redirect url 
+        $redirect_url = !empty($postParams['redirect_url']) ? $postParams['redirect_url'] : $this->page->url;
 
         // submit button name
         $submit_button = !empty($postParams['submit_button']) ? $postParams['submit_button'] : 'submit';
@@ -123,7 +127,7 @@ class KreativanForms extends WireData implements Module {
                     $form_process .= $this->fileUpload();
                     // create array of files
                     foreach($_FILES as $file) {
-                        $files_arr[] .= $this->config->paths->files."_tmp/$file[name]";
+                        $files_arr[] .= $this->config->paths->files."$file[name]";
                     }
 
                     // send email
@@ -158,9 +162,8 @@ class KreativanForms extends WireData implements Module {
                 $this->session->set("kforms_alert", "$success_message");
 
                 // redirect
-                header("Location: {$this->page->url}");
-                exit();
-
+                $this->session->redirect($redirect_url);
+				
             } else {
 
                 // set error session alert
@@ -168,8 +171,7 @@ class KreativanForms extends WireData implements Module {
                 $this->session->set("kforms_alert", "There was an error! Please fill in all required fields.");
 
                 // redirect
-                header("Location: {$this->page->url}");
-                exit();
+                $this->session->redirect($redirect_url);
 
             }
 
@@ -183,8 +185,9 @@ class KreativanForms extends WireData implements Module {
      *  Render Form
      *
      *  Form Params
-     *  @param form main params array
+     *  Form main params array
      *  @param fields fields array, with fields params below
+	 *	@param url form action link
      *  @param class form css class
      *  @param id  form css id
      *  @param button_name
@@ -230,6 +233,7 @@ class KreativanForms extends WireData implements Module {
 
         // main form params
         $form_fields    = $form["fields"];
+		$action_url     = !empty($form['url']) ? $form['url'] : "./";
         $form_class     = !empty($form['class']) ? "{$form['class']} " : "";
         $form_id        = !empty($form['id']) ? $form['id'] : "";
         $button_name    = !empty($form['button_name']) ? $form['button_name'] : "submit";
@@ -244,7 +248,7 @@ class KreativanForms extends WireData implements Module {
         $answer = $numb_1 + $numb_2;
 
         // form markup
-        $form_markup .= "<form id='$form_id' action='./' method='POST' enctype='multipart/form-data' class='{$form_class}'><div class='uk-grid-small' uk-grid>";
+        $form_markup .= "<form id='$form_id' action='$action_url' method='POST' enctype='multipart/form-data' class='{$form_class}'><div class='uk-grid-small' uk-grid>";
 
             foreach($form_fields as $key => $field) {
                 // field vars
@@ -440,7 +444,7 @@ class KreativanForms extends WireData implements Module {
     public function fileUpload() {
 
         // destination dir
-        $storeFolder = $this->config->paths->files."_tmp/";
+        $storeFolder = $this->config->paths->files;
 
         // if dir doesnt exist, create it
         if(!file_exists($storeFolder) && !is_dir($storeFolder)) {
@@ -461,7 +465,7 @@ class KreativanForms extends WireData implements Module {
          */
         if(!empty($_FILES)) {
             foreach($_FILES as $file) {
-                $tmp_file = $this->config->paths->files."_tmp/$file[name]";
+                $tmp_file = $this->config->paths->files."$file[name]";
                 if(file_exists($tmp_file)) {
                     unlink($tmp_file);
                 }

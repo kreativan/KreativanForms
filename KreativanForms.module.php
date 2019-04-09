@@ -4,7 +4,7 @@
  *
  *  @author Ivan Milincic <kreativan@outlook.com>
  *  @copyright 2019 kraetivan.net
- *  @link 2019 http://www.kraetivan.net
+ *  @link http://www.kraetivan.net
  *
  *
 */

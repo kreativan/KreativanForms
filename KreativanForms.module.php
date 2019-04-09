@@ -1,9 +1,10 @@
 <?php
 /**
- *  KreativanForms Module
+ *  Title
  *
- *  @author Ivan Milincic <lokomotivan@gmail.com>
- *  @copyright 2018 Ivan Milincic
+ *  @author Ivan Milincic <kreativan@outlook.com>
+ *  @copyright 2019 kraetivan.net
+ *  @link 2019 http://www.kraetivan.net
  *
  *
 */

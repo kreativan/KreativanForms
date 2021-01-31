@@ -109,11 +109,20 @@ echo $modules->get("KreativanForms")->renderForm($form);
  *  Process Form
  *
  */
-$postParams = [
+$params = [
     "submit_button" => "submit",
     "admin_email" => $system->site_info->email,
     "user_email" => "email",
     "subject" => "subject",
     "success_message" => "Message Sent! Thank you!!!"
 ];
-echo $modules->get("KreativanForms")->processForm($postParams);
+$params = [
+  "submitName" => "submit_form",
+  "emailTo" => "example@gmail.com",
+  "emailFrom" => "from@gmail.com",
+  "emailFromName" => "Kreativan Forms"
+  "emailField" => "mail", // form email field, used for replyTo
+  "subject" => "Hello",
+  "message" => "Message Sent! Thank you!!!"
+];
+echo $modules->get("KreativanForms")->sendEmail($params);

@@ -3,52 +3,53 @@ Processwire Forms Module, based on uikit 3.
 
 Module supports only CSRF and basic validation (for now), comes with basic fields (file upload, date and time picker included) and custom math captcha (eg: 2 +5 = ?)...
 
-To create forms, you need to define your form fields and execute renderForm() and processForm() functions, and thats it.
+To create forms, you need to define your form fields and execute `renderForm()` method. To process form and send an actual email use `sendEmail()` method.
 
 #### Define Fields in array()
 Only required value is array key, type and options (if its a select, radio or checkbox field type). If name is not defined, array key will be used instead, and for the rest of the values defaults will be used.
 ```
 $fields_arr = [
-    "my_field" => [
-        "type" => "select",
-        "name" => "my_field_name",  
-        "label" => "My Field",
-        "placeholder" => "",
-        "required" => true,
-        "width" => "1-2", // uikit width class
-        "options" => ["option 1", "option 2", "option 3"],
-    ],
+  "my_field" => [
+    "type" => "select",
+    "name" => "my_field_name",  
+    "label" => "My Field",
+    "placeholder" => "",
+    "required" => true,
+    "width" => "1-2", // uikit width class
+    "options" => ["option 1", "option 2", "option 3"],
+  ],
 ];
 ```
 #### Render Form
-We need to pass few parametars to the renderForm() function. Only required value is ***fields*** value, this is the fields array we defined before. Also, to use multiple forms on a same page, adding custom ***button_name*** is recomended, if empty "*submit*" name will be used.
+We need to pass few parametars to the `renderForm()` method. Only required param is ***fields***, this is the fields array we defined before. Also, to use multiple forms on a same page, adding custom ***button_name*** is recomended, if empty "*submit*" name will be used.
 ```
 $form = [
-    "fields" => $fields_arr, // fields array
+  "fields" => $fields_arr, // fields array
 	"url" => "./",
-    "class" => "my-form-class",
-    "id" => "my-form",
-    "button_name" => "submit", // submit button name
-    "button_text" => "Send Email",
-    "button_style" => "primary", // uikit color class
-    "button_class" => "", // add some custom class
+  "class" => "my-form-class",
+  "id" => "my-form",
+  "button_name" => "submit", // submit button name
+  "button_text" => "Send Email",
+  "button_style" => "primary", // uikit color class
+  "button_class" => "", // add some custom class
 ];
 echo $modules->get("KreativanForms")->renderForm($form);
 ```
-#### Processing Form
-processForm() function accepts few params. Only required fields are ***submit_button*** (so we know what form to submit) and ***admin_email*** (where to send form to).    
-***user_email*** is the email field name, not actual email address. Its recommended to define it, its used as "email from" and for "replay-to"...    
-***subject*** is also subject field name (if eny).
+#### Processing Form & send email
+`sendEmail()` method accepts few params. Only required fields are ***submitName*** (so we know what form to submit) and ***emailTo*** (where to send form to).    
+***emailField*** is the form email field name, not actual email address. Its recommended to define it, its used for "replyTo"...
 ```
-$postParams = [
-    "submit_button" => "submit",
-    "admin_email" => "example@gmail.com",
-    "user_email" => "email",
-    "subject" => "subject",
-    "success_message" => "Message Sent! Thank you!!!",
-	"redirect_url" => "./",
+$params = [
+    "submitName" => "submit",
+    "emailTo" => "example@gmail.com",
+    "emailFrom" => "from@gmail.com",
+    "emailFromName" => "Kreativan.net",
+    "emailField" => "email",
+    "subject" => "Test Email",
+    "message" => "Message Sent! Thank you!!!",
+	  "redirect_url" => "./",
 ];
-echo $modules->get("KreativanForms")->processForm($postParams);
+echo $modules->get("KreativanForms")->sendEmail($params);
 ```
 ## Example
 Let's create simple contact form
@@ -96,14 +97,16 @@ $form = [
 ];
 echo $kreativanForms->renderForm($form);
 
-// process form
-$postParams = [
-    "submit_button" => "submit_form",
-    "admin_email" => "example@gmail.com",
-    "user_email" => "mail",
-    "subject" => "subject",
-    "success_message" => "Message Sent! Thank you!!!"
+// send email params
+$params = [
+    "submitName" => "submit_form",
+    "emailTo" => "example@gmail.com",
+    "emailFrom" => "from@gmail.com",
+    "emailFromName" => "Kreativan Forms"
+    "emailField" => "mail", // email field name used for replyTo
+    "subject" => "Hello",
+    "message" => "Message Sent! Thank you!!!"
 ];
-echo $kreativanForms->processForm($postParams);
+echo $kreativanForms->sendEmail($params);
 
 ```

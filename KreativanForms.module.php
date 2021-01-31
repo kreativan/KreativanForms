@@ -56,7 +56,7 @@ class KreativanForms extends WireData implements Module {
         $replyTo = $this->input->post->{$emailField};
 
         // send email
-        $m = new wireMail();
+        $m = wireMail();
         $m->to($emailTo);
         if($emailFrom != "") $m->from($emailFrom);
         if($emailFromName != "") $m->fromName($emailFromName);
@@ -487,7 +487,7 @@ class KreativanForms extends WireData implements Module {
       $html .= "<label class='uk-form-label'>{$label}{$req}</label>";
     }
 
-    $html .= "<select class='uk-select' name='$name'>";
+    $html .= "<select class='uk-select' name='$name' $required>";
     $html .= "<option value=''>".$placeholder."</option>";
     if($options != "" && count($options) > 0) {
       foreach($options as $item) {
